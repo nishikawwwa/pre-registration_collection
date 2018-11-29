@@ -22,9 +22,6 @@ def each_page(id):
     #category
     page_category = soup.find('meta', itemprop= 'applicationCategory')
     category = page_category.get('content')
-    #website
-    page_website = soup.find('div', class_='xyOfqd')
-    page_weball = page_website.findAll('div')
 
     #真のweb url
     ss = soup.find('a', string = 'Visit website')
@@ -34,20 +31,29 @@ def each_page(id):
     if ss == None:
         web_url = None
 
-    print('ssssss=', web_url)
+    #print('url=', web_url)
     #住所
+    page_website = soup.find('div', class_='xyOfqd')
+    page_weball = page_website.findAll('div')
     weball_size = len(page_weball)
     page_address = page_weball[weball_size -1]
-    address = page_address.text
-    print('address ==',address)
+    #print(page_address)
+    address = page_address.string
+    #ddd = np.array(address)
+    #ddd = ddd.astype(str)
+    #dds = address.shape[0]
+    #print(dds)
+    #print('len==',ddd[0][0])
+    #print('address ==',address)
 
     #連絡先
     page_mail = soup.find('a', class_ = 'hrTbp KyaTEc')
     mail = page_mail.get('href')
     mail_size = len(mail)
     mail = mail[7:mail_size]
-    print('mail =', mail)
-    return web_url
+    #print('mail =', mail)
+
+    return category, web_url, mail, address
 
 
 def page_collect():
@@ -64,12 +70,15 @@ def page_collect():
 
     driver.close()
     display.stop()
-
     soup = BeautifulSoup(html, "html.parser")
     page_r = soup.findAll('div', class_='card-content id-track-click id-track-impression')
-    #tex = each_page('com.sega.revolvers8')
+    #tex = each_page('com.supercell.brawlstars')
     c = 0
+    #data = np.loadtxt("data.csv",delimiter=",", dtype='str')
+    #print(data)
+    data = np.empty((0,7), str)
     for count in page_r:
+        list = np.array([])
         #id
         id = count.get('data-docid')
         #title
@@ -80,13 +89,19 @@ def page_collect():
         company = page_company.get('title')
         #each page
         print(id)
-        tex = each_page(id)
+        category, web_url, mail, address = each_page(id)
         print(c)
-        #print(title)
-        #print(id)
-        #print(company)
-        #print(tex)
+        print('title =', title)
+        print('id = ',id)
+        print('company =',company)
+        print('category=',category)
+        print('web_url =',web_url)
+        print('mail =',mail)
+        print('address =',address)
+        list = np.append(list,[title, id, company, category, web_url, mail, address])
+        data = np.append(data, np.array([list]),axis = 0)
         c += 1
         sleep(2)
+    np.savetxt('data.csv', data,fmt='%s', delimiter=',')
 
 page_collect()
