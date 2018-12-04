@@ -8,6 +8,7 @@ import os
 from time import sleep
 import lxml.html
 from pyvirtualdisplay import Display
+import sys
 
 
 def each_page(id):
@@ -38,8 +39,13 @@ def each_page(id):
     weball_size = len(page_weball)
     page_address = page_weball[weball_size -1]
     #print(page_address)
-    address = page_address.string
-    #ddd = np.array(address)
+    address_navi = page_address.string
+    address_unicode = str(address_navi)
+    address_unicode = address_unicode.split()
+    address = address_unicode[0]
+    for i in range(1,len(address_unicode)):
+        address += ' ' + address_unicode[i]
+    print('address',type(address))
     #ddd = ddd.astype(str)
     #dds = address.shape[0]
     #print(dds)
@@ -72,7 +78,7 @@ def page_collect():
     display.stop()
     soup = BeautifulSoup(html, "html.parser")
     page_r = soup.findAll('div', class_='card-content id-track-click id-track-impression')
-    #tex = each_page('com.supercell.brawlstars')
+    tex = each_page('com.supercell.brawlstars')
     c = 0
     #data = np.loadtxt("data.csv",delimiter=",", dtype='str')
     #print(data)
