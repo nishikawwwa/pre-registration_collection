@@ -9,6 +9,7 @@ from time import sleep
 import lxml.html
 from pyvirtualdisplay import Display
 import sys
+import pandas as pd
 
 
 def each_page(id):
@@ -81,7 +82,10 @@ def page_collect():
     tex = each_page('com.supercell.brawlstars')
     c = 0
     #data = np.loadtxt("data.csv",delimiter=",", dtype='str')
-    #print(data)
+    pd_df = pd.read_csv('db.csv',index_col=0)
+    pd_title = pd_df['title']
+    pd_title = np.array(pd_title)
+    #リセット
     data = np.empty((0,7), str)
     for count in page_r:
         list = np.array([])
@@ -104,10 +108,24 @@ def page_collect():
         print('web_url =',web_url)
         print('mail =',mail)
         print('address =',address)
-        list = np.append(list,[title, id, company, category, web_url, mail, address])
-        data = np.append(data, np.array([list]),axis = 0)
+        if np.any(pd_title == title) == False:
+            list = np.append(list,[title, id, company, category, web_url, mail, address])
+            data = np.append(data, np.array([list]),axis = 0)
         c += 1
         sleep(2)
-    np.savetxt('data.csv', data,fmt='%s', delimiter=',')
+    print(data)
+    if len(data) != 0:
+        df3 = pd.DataFrame(data, columns = ['title','id','company','category','web_url','mail','address'])
+        df = df.append(df3, ignore_index=True)
+        df.to_csv('db.csv')
 
-page_collect()
+    #dd = pd.read_csv('db.csv')
+    #columns = ['a','b','c','d','e','f','g']
+    #df = pd.DataFrame(data, columns = ['title','id','company','category','web_url','mail','address'])
+
+    #print(df)
+
+    #df.to_csv('db.csv')
+
+
+#page_collect()
