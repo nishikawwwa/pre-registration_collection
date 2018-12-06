@@ -1,4 +1,3 @@
 # pre-registration_collection
-google playの事前登録アプリのクローラー
-一日ごとに更新する
+google playの事前登録アプリを一日ごとに更新するクローラ-  
 `python3 update.py`
